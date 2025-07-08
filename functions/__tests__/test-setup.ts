@@ -36,6 +36,8 @@ export async function setupTestData() {
       id: "with-file-cache",
       data: {
         fileCache: true,
+        docs: [],
+        queries: {},
       },
     },
   ];

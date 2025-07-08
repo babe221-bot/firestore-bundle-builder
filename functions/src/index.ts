@@ -73,7 +73,10 @@ function sortQuery(qs: { [key: string]: any }): string {
 
 // Returns a path for the given bundle Id and associated http query parameters.
 function storagePath(bundleId: string, query: { [k: string]: any }): string {
-  return `${STORAGE_PREFIX}/${bundleId}?${sortQuery(query)}`;
+  const queryString = sortQuery(query);
+  return queryString
+    ? `${STORAGE_PREFIX}/${bundleId}?${queryString}`
+    : `${STORAGE_PREFIX}/${bundleId}`;
 }
 
 /**
