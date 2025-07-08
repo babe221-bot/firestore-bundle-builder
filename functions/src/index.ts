@@ -6,13 +6,12 @@
  * specifications.
  */
 
-import * as admin from "firebase-admin";
-import * as functions from "firebase-functions";
-import { Timestamp } from "@google-cloud/firestore";
-import { BundleSpec, build, ParamsSpec } from "./build_bundle";
 import { Storage } from "@google-cloud/storage";
+import * as admin from "firebase-admin";
+import * as functions from "firebase-functions/v1";
 import { createGzip } from "zlib";
-const { Readable } = require("stream");
+import { type BundleSpec, build, type ParamsSpec } from "./build_bundle";
+import { Readable } from "stream";
 
 const BUNDLESPEC_COLLECTION = process.env.BUNDLESPEC_COLLECTION || "bundles";
 const BUNDLE_STORAGE_BUCKET =
@@ -121,7 +120,7 @@ db.collection(BUNDLESPEC_COLLECTION).onSnapshot((snap) => {
  * there is a valid bundle file saved in GCS, and return that if yes. It would
  * save the built bundle file GCS, if a valid bundle file could not be found.
  */
-export const serve = functions.handler.https.onRequest(
+export const serve = functions.https.onRequest(
   async (req, res): Promise<any> => {
     functions.logger.debug(
       "accept-encoding:",

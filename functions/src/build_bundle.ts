@@ -1,11 +1,10 @@
-import { firestore } from "firebase-admin";
 import {
-  BundleBuilder,
-  Firestore,
-  Query,
-  Timestamp,
-  WhereFilterOp,
+  type BundleBuilder,
+  type Firestore,
+  type Query,
+  type WhereFilterOp,
 } from "@google-cloud/firestore";
+import type { firestore } from "firebase-admin";
 
 /**
  * Specification of a condition associated to a Firestore query.
@@ -203,7 +202,7 @@ export function buildQuery(
     params,
     paramValues
   );
-  let result: Query = !!qSpec.collectionGroupQuery
+  let result: Query = qSpec.collectionGroupQuery
     ? db.collectionGroup(parameterizedPath)
     : db.collection(parameterizedPath);
 
