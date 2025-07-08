@@ -1,4 +1,5 @@
 import * as admin from "firebase-admin";
+import { setupTestData } from "./test-setup";
 
 process.env.FIRESTORE_EMULATOR_HOST = "localhost:8080";
 process.env.FIREBASE_FIRESTORE_EMULATOR_ADDRESS = "localhost:8080";
@@ -12,8 +13,14 @@ if (admin.apps.length === 0) {
   admin.initializeApp({ projectId: "demo-experimental" });
 }
 
+// Setup test data before all tests
+beforeAll(async () => {
+  await setupTestData();
+});
+
 const extractObjectfromBuffer = ($) => {
-  const splitBuffers = $.toString().replace(/[\d]+[{]+/g, ",{");
+  const buffer = Buffer.from($);
+  const splitBuffers = buffer.toString().replace(/[\d]+[{]+/g, ",{");
   const formatted = splitBuffers.toString().substring(1);
   return JSON.parse(`[${formatted.toString()}]`);
 };
@@ -29,7 +36,11 @@ describe("functions", () => {
   it("successfully returns a bundle with queries, documents and params combined", async () => {
     const bundleName = "documents-queries-params";
     const url = extUrl(bundleName);
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        "Accept-Encoding": "identity",
+      },
+    });
     const bundle = await response.arrayBuffer();
 
     const [metadata, documentMetadata, document] =
@@ -49,7 +60,11 @@ describe("functions", () => {
   it("successfully returns a bundle using a query with a collection", async () => {
     const bundleName = "query-with-a-collection";
     const url = extUrl(bundleName);
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        "Accept-Encoding": "identity",
+      },
+    });
     const bundle = await response.arrayBuffer();
 
     const [metadata, documentMetadata, document] =
@@ -69,7 +84,11 @@ describe("functions", () => {
   it("successfully returns a bundle using a query with a collection and condition", async () => {
     const bundleName = "query-with-a-collection-and-condition";
     const url = extUrl(bundleName);
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        "Accept-Encoding": "identity",
+      },
+    });
     const bundle = await response.arrayBuffer();
 
     const [metadata, documentMetadata, document] =
@@ -89,7 +108,11 @@ describe("functions", () => {
   it("successfully returns a bundle using a query with a collection and where clause", async () => {
     const bundleName = "query-with-a-collection-and-condition";
     const url = extUrl(bundleName);
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        "Accept-Encoding": "identity",
+      },
+    });
     const bundle = await response.arrayBuffer();
 
     const [metadata, documentMetadata, document] =
@@ -106,10 +129,14 @@ describe("functions", () => {
     expect(document.documentMetadata.queries[0]).toEqual("example");
   });
 
-  xit("successfully returns a bundle using a query with a collection and multiple where clauses", async () => {
+  it("successfully returns a bundle using a query with a collection and multiple where clauses", async () => {
     const bundleName = "query-with-a-collection-and-multiple-where-conditions";
     const url = extUrl(bundleName);
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        "Accept-Encoding": "identity",
+      },
+    });
     const bundle = await response.arrayBuffer();
 
     const [metadata, documentMetadata, document] =
@@ -129,7 +156,11 @@ describe("functions", () => {
   it("successfully returns a bundle using a document", async () => {
     const bundleName = "single-document";
     const url = extUrl(bundleName);
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        "Accept-Encoding": "identity",
+      },
+    });
     const bundle = await response.arrayBuffer();
 
     const [metadata, documentMetadata, document] =
@@ -153,7 +184,11 @@ describe("functions", () => {
   it("successfully returns a bundle using multiple documents", async () => {
     const bundleName = "multiple-documents";
     const url = extUrl(bundleName);
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        "Accept-Encoding": "identity",
+      },
+    });
     const bundle = await response.arrayBuffer();
 
     const [metadata, documentMetadata, document] =
@@ -178,7 +213,11 @@ describe("functions", () => {
   it("successfully returns a bundle using params", async () => {
     const bundleName = "query-with-param";
     const url = extUrl(bundleName) + "?name=document2";
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        "Accept-Encoding": "identity",
+      },
+    });
     const bundle = await response.arrayBuffer();
 
     const [metadata, documentMetadata, document] =
@@ -198,7 +237,11 @@ describe("functions", () => {
   it("successfully returns a bundle using clientCache", async () => {
     const bundleName = "with-client-cache";
     const url = extUrl(bundleName);
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        "Accept-Encoding": "identity",
+      },
+    });
     const bundle = await response.arrayBuffer();
 
     const [metadata, documentMetadata, document] =
@@ -209,10 +252,14 @@ describe("functions", () => {
     expect(metadata.metadata.totalDocuments).toEqual(0);
   });
 
-  xit("successfully returns a bundle using serverCache", async () => {
+  it("successfully returns a bundle using serverCache", async () => {
     const bundleName = "with-server-cache";
     const url = extUrl(bundleName);
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        "Accept-Encoding": "identity",
+      },
+    });
     const bundle = await response.arrayBuffer();
 
     const [metadata, documentMetadata, document] =
@@ -223,10 +270,14 @@ describe("functions", () => {
     expect(metadata.metadata.totalDocuments).toEqual(0);
   });
 
-  xit("successfully returns a bundle using fileCache", async () => {
+  it("successfully returns a bundle using fileCache", async () => {
     const bundleName = "with-file-cache";
     const url = extUrl(bundleName);
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        "Accept-Encoding": "identity",
+      },
+    });
     const bundle = await response.arrayBuffer();
 
     const [metadata, documentMetadata, document] =
@@ -240,7 +291,11 @@ describe("functions", () => {
   xit("successfully returns a request through a webiste hosted by Firebase", async () => {
     const bundleName = "documents-queries-params";
     const url = extHostedUrl(bundleName);
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        "Accept-Encoding": "identity",
+      },
+    });
     const bundle = await response.arrayBuffer();
 
     const [metadata, documentMetadata, document] =
@@ -259,9 +314,13 @@ describe("functions", () => {
 
   it("returns a 404 response if an unknown bundle is provided", async () => {
     const bundleName = "unknown-bundle";
-    const url = extHostedUrl(bundleName);
+    const url = extUrl(bundleName);
 
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        "Accept-Encoding": "identity",
+      },
+    });
     expect(response.status).toEqual(404);
   });
 });

@@ -7,7 +7,7 @@ describe("buildQuery", () => {
     db = admin.initializeApp({ projectId: "demo-experimental" }).firestore();
   });
 
-  xit("should build expected queries", () => {
+  it("should build expected queries", () => {
     const queries: [admin.firestore.Query, admin.firestore.Query][] = [
       [
         buildQuery(db, { collection: "test-coll", conditions: [] }, {}, {}),

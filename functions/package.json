@@ -6,7 +6,7 @@
     "lint:check": "biome check",
     "format": "biome format --write",
     "build": "tsc",
-    "test": "jest",
+    "test": "cd ../_emulator && firebase emulators:exec --import=./import --only firestore,functions,storage,extensions --project demo-experimental 'cd ../functions && jest'",
     "generate-readme": "firebase ext:info .. --markdown > ../README.md"
   },
   "main": "lib/index.js",

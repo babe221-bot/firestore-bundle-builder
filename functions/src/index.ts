@@ -9,9 +9,9 @@
 import { Storage } from "@google-cloud/storage";
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions/v1";
+import { Readable } from "stream";
 import { createGzip } from "zlib";
 import { type BundleSpec, build, type ParamsSpec } from "./build_bundle";
-import { Readable } from "stream";
 
 const BUNDLESPEC_COLLECTION = process.env.BUNDLESPEC_COLLECTION || "bundles";
 const BUNDLE_STORAGE_BUCKET =
@@ -53,7 +53,7 @@ function spec(name: string): Promise<BundleSpec | null> {
 // Return query parameters that are specified in given `ParamsSpec`.
 function filterQuery(
   qs: { [key: string]: any },
-  params: ParamsSpec
+  params: ParamsSpec,
 ): { [key: string]: any } {
   const out: { [key: string]: any } = {};
   for (const k in qs) {
@@ -88,7 +88,7 @@ async function fileCacheStream(
   options: {
     ttlSec: number;
     gzip?: boolean;
-  }
+  },
 ): Promise<NodeJS.ReadableStream | null> {
   const file = bucket.file(storagePath(bundleId, query));
   try {
@@ -125,7 +125,7 @@ export const serve = functions.https.onRequest(
     functions.logger.debug(
       "accept-encoding:",
       req.get("accept-encoding"),
-      req.headers
+      req.headers,
     );
     const canGzip = req.get("accept-encoding")?.includes("gzip") || false;
     if (canGzip) {
@@ -176,7 +176,7 @@ export const serve = functions.https.onRequest(
 
     try {
       let stream = Readable.from(
-        (await build(db, bundleId, bundleSpec, paramValues)).build()
+        (await build(db, bundleId, bundleSpec, paramValues)).build(),
       );
 
       if (canGzip) {
@@ -192,7 +192,7 @@ export const serve = functions.https.onRequest(
         storageStream.pipe(
           bucket
             .file(storagePath(bundleId, paramValues))
-            .createWriteStream({ metadata: { contentEncoding: "gzip" } })
+            .createWriteStream({ metadata: { contentEncoding: "gzip" } }),
         );
       }
 
@@ -201,5 +201,5 @@ export const serve = functions.https.onRequest(
       functions.logger.error(e);
       res.status(500).send(e.message);
     }
-  }
+  },
 );
